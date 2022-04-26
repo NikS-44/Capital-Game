@@ -5,14 +5,11 @@ import './Game.css';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import WorldMap from "react-svg-worldmap";
 
-// function getRandomInt(max) {
-//     return Math.floor(Math.random() * max);
-// }
-const fullDaysSinceEpoch = Math.floor((new Date())/8.64e7);
-
 // Seeded with current day to a 'good-enough' pseudo-random number generator
 // Hopefully every day will produce the same order for everyone???
+const fullDaysSinceEpoch = Math.floor((new Date()) / 8.64e7);
 let seed = fullDaysSinceEpoch;
+
 function seededRandom() {
     const x = Math.sin(seed++) * 10000;
     return x - Math.floor(x);
@@ -22,7 +19,7 @@ function seededRandom() {
 function shuffleArray(array) {
     let currentIndex = array.length;
     let randomIndex;
-    while (currentIndex != 0) {
+    while (currentIndex !== 0) {
         randomIndex = Math.floor(seededRandom() * currentIndex);
         currentIndex--;
         [array[currentIndex], array[randomIndex]] = [
@@ -32,11 +29,15 @@ function shuffleArray(array) {
 }
 
 function Game() {
-    const [countriesList, setCountriesList] = useState(shuffleArray(COUNTRIES));
+    const [countriesList, setCountriesList] = useState([{name:"none",code:"none",capital:"none"}]);
     const [enteredCapital, setEnteredCapital] = useState('');
     const [placeHolderText, setPlaceHolderText] = useState('');
     const [guessCounter, setGuessCounter] = useState(3);
     const [score, setScore] = useState(0);
+
+    useEffect(()=>{
+        setCountriesList(shuffleArray(COUNTRIES));
+    },[]);
 
     const enteredCapitalChangeHandler = (event) => {
         setEnteredCapital(event.target.value);
@@ -59,15 +60,16 @@ function Game() {
             } else {
                 setEnteredCapital('');
                 setPlaceHolderText('Sorry, no more guesses left, the capital of ' + countriesList[0].name + ' is ' + countriesList[0].capital + '.')
-                nextCountry();
+                nextCountrySkip();
             }
         }
     };
 
     const removeCountryFromList = () => {
         setCountriesList(oldList => {
-            oldList.shift();
-            return oldList;
+            const newList = [...oldList];
+            newList.shift();
+            return newList;
         })
     }
 
@@ -82,16 +84,8 @@ function Game() {
         setScore(oldScore=> oldScore-1);
         setPlaceHolderText('The capital of ' + countriesList[0].name + ' is ' + countriesList[0].capital + '.')
     }
-    // let data = [];
-    // if(countriesList[0]){
-    //     data = [
-    //         { country: countriesList[0].code , value: 1389618778 },
-    //     ];
-    // }
 
-    const mapData = [
-        { country: countriesList[0].code , value: 1389618778 },
-    ];
+    const mapData = [{country: countriesList[0].code, value: 1389618778}];
 
     return (
         <>
@@ -101,10 +95,10 @@ function Game() {
                     <Form.Control type="text" placeholder='Enter guess' value={enteredCapital}
                                   onChange={enteredCapitalChangeHandler}/>
                     <Form.Text className="text-muted">{placeHolderText}</Form.Text>
-                </Form.Group> }
+                </Form.Group>}
                 {countriesList.length === 0 && <Form.Group className="mb-3 input-field" controlId="formBasicText">
                     <Form.Text className="text-muted">That's all da countries</Form.Text>
-                </Form.Group> }
+                </Form.Group>}
                 {countriesList.length > 0 && <Button variant="primary" type="submit" className="me-2">
                     Submit
                 </Button>}
