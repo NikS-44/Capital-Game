@@ -35,6 +35,7 @@ function Game() {
     const [guessCounter, setGuessCounter] = useState(3);
     const [score, setScore] = useState(0);
 
+    // Setup countries list on Game init
     useEffect(()=>{
         setCountriesList(shuffleArray(COUNTRIES));
     },[]);
