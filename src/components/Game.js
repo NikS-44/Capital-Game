@@ -86,7 +86,7 @@ function Game() {
         setPlaceHolderText('The capital of ' + countriesList[0].name + ' is ' + countriesList[0].capital + '.')
     }
 
-    const mapData = [{country: countriesList[0].code, value: 1389618778}];
+    const mapData = [{country: countriesList[0]?.code, value: 1389618778}];
 
     return (
         <>
@@ -97,9 +97,7 @@ function Game() {
                                   onChange={enteredCapitalChangeHandler}/>
                     <Form.Text className="text-muted">{placeHolderText}</Form.Text>
                 </Form.Group>}
-                {countriesList.length === 0 && <Form.Group className="mb-3 input-field" controlId="formBasicText">
-                    <Form.Text className="text-muted">That's all da countries</Form.Text>
-                </Form.Group>}
+                {countriesList.length === 0 && <Form.Text className="text-muted">That's all da countries.</Form.Text>}
                 {countriesList.length > 0 && <Button variant="primary" type="submit" className="me-2">
                     Submit
                 </Button>}
@@ -110,17 +108,26 @@ function Game() {
                 }
             </Form>
             <br/>
-            <h5>
+            {countriesList.length > 0 && <h5>
                 Score: {score}
-            </h5>
-            <WorldMap
+            </h5>}
+            {countriesList.length === 0 && <h5>
+                Final Score: {score}
+                <div>
+                    <br/>
+                    <Button variant="success" onClick={() =>  navigator.clipboard.writeText(`My Capitle Score today was: ${score}.`)}>
+                        Share your score
+                    </Button>
+                </div>
+            </h5>}
+            {countriesList.length > 0 && <WorldMap
                 color="red"
                 title=""
                 value-suffix="people"
                 size="responsive"
                 data={mapData}
                 richInteraction
-            />
+            />}
         </>
 
     );
